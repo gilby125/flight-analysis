@@ -1,19 +1,26 @@
-# Use official Python base image
-FROM python:3.9-slim as builder
+# First stage - get wget and unzip from a base image that has them
+FROM debian:bullseye-slim as downloader
 
-# Download static wget and unzip binaries
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -p /opt/bin && \
     wget -q -O /opt/bin/wget https://github.com/moparisthebest/static-curl/releases/download/v7.88.1/wget && \
     wget -q -O /opt/bin/unzip https://github.com/moparisthebest/static-curl/releases/download/v7.88.1/unzip && \
     chmod +x /opt/bin/wget /opt/bin/unzip
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Second stage - main build
+FROM python:3.9-slim
+
+# Copy static binaries from downloader stage
+COPY --from=downloader /opt/bin/wget /opt/bin/wget
+COPY --from=downloader /opt/bin/unzip /opt/bin/unzip
 ENV PATH="/opt/bin:${PATH}"
 
 # Download and install Chrome
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+RUN mkdir -p /opt/chrome && \
+    wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -x google-chrome-stable_current_amd64.deb /opt/chrome && \
     rm google-chrome-stable_current_amd64.deb
 
@@ -28,14 +35,7 @@ RUN CHROME_VERSION=$(/opt/chrome/opt/google/chrome/chrome --version | cut -d ' '
     chmod +x /opt/bin/chromedriver && \
     rm chromedriver_linux64.zip chromedriver_version.txt
 
-# Runtime stage
-FROM python:3.9-slim
-
-# Copy binaries from builder
-COPY --from=builder /opt /opt
-
 # Set environment variables
-ENV PATH="/opt/bin:${PATH}"
 ENV CHROME_OPTS="--no-sandbox --disable-dev-shm-usage --headless"
 ENV CHROME_BIN="/opt/chrome/opt/google/chrome/chrome"
 
