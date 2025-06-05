@@ -27,15 +27,33 @@ COPY . .
 # Runtime stage
 FROM python:3.9-slim
 
-# Install Chromium with retries and fallbacks
-RUN apt-get update || apt-get update && \
+# Install Chromium with all dependencies
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        chromium-browser \
-        chromium-driver && \
+        chromium \
+        chromium-driver \
+        fonts-liberation \
+        libasound2 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libatspi2.0-0 \
+        libcups2 \
+        libdbus-1-3 \
+        libdrm2 \
+        libgbm1 \
+        libgtk-3-0 \
+        libnspr4 \
+        libnss3 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxfixes3 \
+        libxkbcommon0 \
+        libxrandr2 \
+        xdg-utils && \
     rm -rf /var/lib/apt/lists/*
 
 # Set Chromium as default browser with necessary flags
-ENV CHROME_BIN=/usr/bin/chromium-browser \
+ENV CHROME_BIN=/usr/bin/chromium \
     CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage --headless"
 
 # Copy Python dependencies from builder
