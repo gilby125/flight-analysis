@@ -1,2 +1,2 @@
--- PostgreSQL initialization script
-CREATE DATABASE flight_db;
+-- DEPRECATED - No longer used
+-- Database initialization is now handled via environment variables in docker-compose.yml
