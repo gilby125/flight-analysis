@@ -27,14 +27,13 @@ COPY . .
 # Runtime stage
 FROM python:3.9-slim
 
-# Install Chrome for selenium
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget && \
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends google-chrome-stable && \
+# Install Chromium for selenium (more reliable than Chrome in containers)
+RUN apt-get update || apt-get update && \
+    apt-get install -y --no-install-recommends chromium && \
     rm -rf /var/lib/apt/lists/*
+
+# Set Chromium as default browser
+ENV CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage"
 
 # Copy Python dependencies from builder
 COPY --from=builder /root/.local /root/.local

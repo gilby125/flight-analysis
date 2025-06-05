@@ -31,8 +31,11 @@ def ScrapeObjects(objs, deep_copy = False):
 		objs = [objs]
 
 
-	chromedriver_autoinstaller.install() # check if chromedriver is installed correctly and on path
-	driver = webdriver.Chrome()
+	options = webdriver.ChromeOptions()
+	options.binary_location = '/usr/bin/chromium'
+	options.add_argument('--no-sandbox')
+	options.add_argument('--disable-dev-shm-usage')
+	driver = webdriver.Chrome(options=options)
 	driver.maximize_window()
 
 	# modifies the objects in-place
