@@ -31,12 +31,17 @@ def ScrapeObjects(objs, deep_copy = False):
 
 
 	options = webdriver.ChromeOptions()
-	options.binary_location = '/usr/bin/google-chrome-stable'
+	options.binary_location = '/usr/bin/google-chrome'
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-dev-shm-usage')
 	options.add_argument('--headless')
 	options.add_argument('--disable-gpu')
-	driver = webdriver.Chrome(options=options)
+	driver = webdriver.Chrome(
+		options=options,
+		service=webdriver.ChromeService(
+			executable_path='/usr/local/bin/chromedriver'
+		)
+	)
 
 	# modifies the objects in-place
 	debug = [obj._scrape_data(driver) for obj in tqdm(objs, desc="Scraping Objects")]
