@@ -1,11 +1,12 @@
 # Use official Python base image
 FROM python:3.9-slim
 
-# Install minimal dependencies
-RUN apt-get update && \
+# Install minimal dependencies with retries
+RUN apt-get update || apt-get update && \
     apt-get install -y --no-install-recommends \
         wget \
-        unzip && \
+        unzip \
+        ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install Chrome
