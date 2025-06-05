@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    networks:
+      - flight-network
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=flight_user
+      - POSTGRES_PASSWORD=flight_pass
+      - POSTGRES_DB=flight_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - flight-network
+
+networks:
+  flight-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
