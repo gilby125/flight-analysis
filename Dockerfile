@@ -27,13 +27,16 @@ COPY . .
 # Runtime stage
 FROM python:3.9-slim
 
-# Install Chromium for selenium (more reliable than Chrome in containers)
+# Install Chromium with retries and fallbacks
 RUN apt-get update || apt-get update && \
-    apt-get install -y --no-install-recommends chromium && \
+    apt-get install -y --no-install-recommends \
+        chromium-browser \
+        chromium-driver && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Chromium as default browser
-ENV CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage"
+# Set Chromium as default browser with necessary flags
+ENV CHROME_BIN=/usr/bin/chromium-browser \
+    CHROMIUM_FLAGS="--no-sandbox --disable-dev-shm-usage --headless"
 
 # Copy Python dependencies from builder
 COPY --from=builder /root/.local /root/.local

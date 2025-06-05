@@ -6,7 +6,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
-import chromedriver_autoinstaller
 from datetime import date, datetime, timedelta
 import numpy as np
 import pandas as pd
