@@ -31,7 +31,7 @@ def ScrapeObjects(objs, deep_copy = False):
 
 
 	options = webdriver.ChromeOptions()
-	options.binary_location = '/usr/bin/google-chrome'
+	options.binary_location = '/opt/chrome/opt/google/chrome/chrome'
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-dev-shm-usage')
 	options.add_argument('--headless')
@@ -39,7 +39,7 @@ def ScrapeObjects(objs, deep_copy = False):
 	driver = webdriver.Chrome(
 		options=options,
 		service=webdriver.ChromeService(
-			executable_path='/usr/local/bin/chromedriver'
+			executable_path='/opt/bin/chromedriver'
 		)
 	)
 
